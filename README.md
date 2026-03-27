@@ -38,6 +38,27 @@ Set-Location c:\Users\avish\Documents\git\medical-microservices\user-service; np
 
 (repeat for `doctor-service`, `appointment-service`, `payment-service`, `api-gateway`).
 
+Then install the **root** helper (starts all apps with one command):
+
+```powershell
+Set-Location c:\Users\avish\Documents\git\medical-microservices; npm install
+```
+
+## Run everything at once (recommended)
+
+From the **repository root** (folder that contains `user-service`, `api-gateway`, etc.):
+
+```powershell
+npm start
+```
+
+This uses [concurrently](https://www.npmjs.com/package/concurrently) to run all five processes in **one terminal**. Logs are prefixed with `US`, `DS`, `AS`, `PS`, `GW`. Press `Ctrl+C` once to stop all of them (`-k` kills the rest if one exits).
+
+- **Gateway:** [http://localhost:5000](http://localhost:5000)  
+- **Swagger:** ports `3001`–`3004` at `/api-docs` as before  
+
+To run only the four microservices (no gateway): `npm run start:services-only`.
+
 ## Run each service (independent)
 
 Open **five terminals**. Start the four microservices first, then the gateway.
