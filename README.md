@@ -16,32 +16,26 @@ medical-microservices/
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) 18 or newer
-- npm (bundled with Node)
+- **npm 7+** (workspaces need a single install from the repo root)
 
 ## Install dependencies
 
-From the repository root, install each package (separate `node_modules` per service):
+This repo uses **[npm workspaces](https://docs.npmjs.com/cli/using-npm/workspaces)**. Each service still has its own `package.json`, but you install **once** from the root — dependencies are linked/hoisted and **`package-lock.json` lives only at the root**.
 
-```bash
-cd api-gateway && npm install && cd ..
-cd user-service && npm install && cd ..
-cd doctor-service && npm install && cd ..
-cd appointment-service && npm install && cd ..
-cd payment-service && npm install && cd ..
-```
-
-On Windows PowerShell, run the installs one folder at a time:
+From the repository root:
 
 ```powershell
-Set-Location c:\Users\avish\Documents\git\medical-microservices\user-service; npm install
+Set-Location c:\Users\avish\Documents\git\medical-microservices
+npm install
 ```
 
-(repeat for `doctor-service`, `appointment-service`, `payment-service`, `api-gateway`).
+If you previously ran `npm install` inside each folder and hit odd resolution errors, delete old `node_modules` folders (root + each `*-service` / `api-gateway`) and run `npm install` again from the root only.
 
-Then install the **root** helper (starts all apps with one command):
+### Run one service from the root
 
 ```powershell
-Set-Location c:\Users\avish\Documents\git\medical-microservices; npm install
+npm run start -w user-service
+# or: doctor-service, appointment-service, payment-service, api-gateway
 ```
 
 ## Run everything at once (recommended)
@@ -61,15 +55,15 @@ To run only the four microservices (no gateway): `npm run start:services-only`.
 
 ## Run each service (independent)
 
-Open **five terminals**. Start the four microservices first, then the gateway.
+From **repo root** (after `npm install` there), or `cd` into the folder and run `npm start`.
 
-| Service             | Command                         | Port |
-|---------------------|----------------------------------|------|
-| User                | `cd user-service && npm start`   | 3001 |
-| Doctor              | `cd doctor-service && npm start` | 3002 |
-| Appointment         | `cd appointment-service && npm start` | 3003 |
-| Payment             | `cd payment-service && npm start` | 3004 |
-| API Gateway         | `cd api-gateway && npm start`  | 5000 |
+| Service     | From root                         | From service folder | Port |
+|-------------|-----------------------------------|----------------------|------|
+| User        | `npm run start -w user-service`   | `cd user-service; npm start` | 3001 |
+| Doctor      | `npm run start -w doctor-service` | `cd doctor-service; npm start` | 3002 |
+| Appointment | `npm run start -w appointment-service` | `cd appointment-service; npm start` | 3003 |
+| Payment     | `npm run start -w payment-service` | `cd payment-service; npm start` | 3004 |
+| API Gateway | `npm run start -w api-gateway`   | `cd api-gateway; npm start` | 5000 |
 
 ### Swagger (per service)
 
@@ -89,6 +83,10 @@ The gateway strips the first path segment and forwards to the matching service.
 | `POST /users/register` | User → `POST /register` |
 | `POST /users/login` | User → `POST /login` |
 | `GET /users/profile` | User → `GET /profile` (header: `Authorization: Bearer <token>`) |
+| `PATCH /users/profile` | User → `PATCH /profile` (updates name/phone; returns new JWT) |
+| `PATCH /users/profile/password` | User → `PATCH /profile/password` (`currentPassword`, `newPassword`) |
+| `GET /users/users` | User → `GET /users` (demo list, no auth) |
+| `GET /users/users/1` | User → `GET /users/1` |
 | `POST /doctors/doctor` | Doctor → `POST /doctor` |
 | `GET /doctors/doctors` | Doctor → `GET /doctors` |
 | `GET /doctors/doctors/1` | Doctor → `GET /doctors/1` |
@@ -133,6 +131,8 @@ Replace `TOKEN` from login response for profile:
 
 ```bash
 curl -s http://localhost:5000/users/profile -H "Authorization: Bearer TOKEN"
+curl -s -X PATCH http://localhost:5000/users/profile -H "Authorization: Bearer TOKEN" -H "Content-Type: application/json" -d "{\"fullName\":\"Pat P.\",\"phone\":\"+94771234567\"}"
+curl -s http://localhost:5000/users/users
 ```
 
 ## Security note
