@@ -1,6 +1,6 @@
 # Online Medical Appointment System — Microservices Backend
 
-Node.js and Express microservices with an API Gateway (`http-proxy-middleware`). Each service has its own `server.js`, in-memory demo data, and **Swagger UI** at `/api-docs`.
+Node.js and Express microservices with an API Gateway (`http-proxy-middleware`). **Swagger UI** is at **`http://localhost:5000/api-docs`** on the gateway (all public paths in one place), and each microservice still exposes `/api-docs` on its own port.
 
 ## Project layout
 
@@ -49,7 +49,8 @@ npm start
 This uses [concurrently](https://www.npmjs.com/package/concurrently) to run all five processes in **one terminal**. Logs are prefixed with `US`, `DS`, `AS`, `PS`, `GW`. Press `Ctrl+C` once to stop all of them (`-k` kills the rest if one exits).
 
 - **Gateway:** [http://localhost:5000](http://localhost:5000)  
-- **Swagger:** ports `3001`–`3004` at `/api-docs` as before  
+- **Swagger (gateway — recommended for demos):** [http://localhost:5000/api-docs](http://localhost:5000/api-docs)  
+- **Swagger per service:** ports `3001`–`3004` at `/api-docs`  
 
 To run only the four microservices (no gateway): `npm run start:services-only`.
 
@@ -65,9 +66,11 @@ From **repo root** (after `npm install` there), or `cd` into the folder and run 
 | Payment     | `npm run start -w payment-service` | `cd payment-service; npm start` | 3004 |
 | API Gateway | `npm run start -w api-gateway`   | `cd api-gateway; npm start` | 5000 |
 
-### Swagger (per service)
+### Swagger (gateway + per service)
 
-With a service running, open:
+- **All routes via gateway:** [http://localhost:5000/api-docs](http://localhost:5000/api-docs) (run gateway + backends for Try it out)
+
+Per microservice (direct):
 
 - User: [http://localhost:3001/api-docs](http://localhost:3001/api-docs)
 - Doctor: [http://localhost:3002/api-docs](http://localhost:3002/api-docs)
@@ -96,10 +99,11 @@ The gateway strips the first path segment and forwards to the matching service.
 | `POST /payments/pay` | Payment → `POST /pay` |
 | `GET /payments/payments` | Payment → `GET /payments` |
 
-Gateway health and route map:
+Gateway health, route map, and Swagger:
 
 - [http://localhost:5000/health](http://localhost:5000/health)
 - [http://localhost:5000/](http://localhost:5000/)
+- [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
 
 ## Optional: service base URLs (Docker / remote)
 
