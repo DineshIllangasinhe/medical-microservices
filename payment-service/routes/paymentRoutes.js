@@ -12,7 +12,7 @@ let idSeq = 1;
  *     summary: Create payment record
  *     tags: [Payments]
  */
-router.post('/pay', (req, res) => {
+function createPayment(req, res) {
   const { appointmentId, amount, currency, method } = req.body;
   if (appointmentId == null || amount == null || !currency) {
     return res.status(400).json({ error: 'appointmentId, amount, and currency are required' });
@@ -28,7 +28,18 @@ router.post('/pay', (req, res) => {
   };
   payments.push(payment);
   return res.status(201).json(payment);
-});
+}
+
+router.post('/pay', createPayment);
+
+/**
+ * @openapi
+ * /payments:
+ *   post:
+ *     summary: Create payment (same as POST /pay)
+ *     tags: [Payments]
+ */
+router.post('/payments', createPayment);
 
 /**
  * @openapi

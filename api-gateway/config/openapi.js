@@ -77,48 +77,6 @@ const spec = {
         security: [{ bearerAuth: [] }],
         responses: { 200: { description: 'OK' }, 401: { description: 'Unauthorized' } },
       },
-      patch: {
-        tags: ['Users'],
-        summary: 'Update profile (returns new JWT)',
-        security: [{ bearerAuth: [] }],
-        requestBody: {
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  fullName: { type: 'string' },
-                  phone: { type: 'string', nullable: true },
-                },
-              },
-            },
-          },
-        },
-        responses: { 200: { description: 'OK' }, 400: { description: 'Bad request' }, 401: { description: 'Unauthorized' } },
-      },
-    },
-    '/users/profile/password': {
-      patch: {
-        tags: ['Users'],
-        summary: 'Change password',
-        security: [{ bearerAuth: [] }],
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                required: ['currentPassword', 'newPassword'],
-                properties: {
-                  currentPassword: { type: 'string' },
-                  newPassword: { type: 'string', minLength: 6 },
-                },
-              },
-            },
-          },
-        },
-        responses: { 200: { description: 'OK' }, 401: { description: 'Wrong current password' } },
-      },
     },
     '/users/users': {
       get: {
@@ -133,6 +91,71 @@ const spec = {
         summary: 'Get user by id',
         parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'integer' } }],
         responses: { 200: { description: 'OK' }, 404: { description: 'Not found' } },
+      },
+      patch: {
+        tags: ['Users'],
+        summary: 'Partial update (JWT; own id only)',
+        security: [{ bearerAuth: [] }],
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'integer' } }],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  fullName: { type: 'string' },
+                  email: { type: 'string', format: 'email' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'OK' },
+          400: { description: 'Bad request' },
+          403: { description: 'Forbidden' },
+          404: { description: 'Not found' },
+          409: { description: 'Email in use' },
+        },
+      },
+      put: {
+        tags: ['Users'],
+        summary: 'Replace fullName and email (JWT; own id only)',
+        security: [{ bearerAuth: [] }],
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'integer' } }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['fullName', 'email'],
+                properties: {
+                  fullName: { type: 'string' },
+                  email: { type: 'string', format: 'email' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'OK' },
+          400: { description: 'Bad request' },
+          403: { description: 'Forbidden' },
+          404: { description: 'Not found' },
+          409: { description: 'Email in use' },
+        },
+      },
+      delete: {
+        tags: ['Users'],
+        summary: 'Delete user (JWT; own id only)',
+        security: [{ bearerAuth: [] }],
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'integer' } }],
+        responses: {
+          200: { description: 'OK' },
+          403: { description: 'Forbidden' },
+          404: { description: 'Not found' },
+        },
       },
     },
     '/doctors/doctor': {
@@ -159,6 +182,27 @@ const spec = {
       },
     },
     '/doctors/doctors': {
+      post: {
+        tags: ['Doctors'],
+        summary: 'Create doctor (same as POST /doctors/doctor)',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['fullName', 'specialty'],
+                properties: {
+                  fullName: { type: 'string' },
+                  specialty: { type: 'string' },
+                  licenseNo: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+        responses: { 201: { description: 'Created' }, 400: { description: 'Bad request' } },
+      },
       get: {
         tags: ['Doctors'],
         summary: 'List doctors',
@@ -169,6 +213,54 @@ const spec = {
       get: {
         tags: ['Doctors'],
         summary: 'Get doctor by id',
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'integer' } }],
+        responses: { 200: { description: 'OK' }, 404: { description: 'Not found' } },
+      },
+      patch: {
+        tags: ['Doctors'],
+        summary: 'Partial update doctor',
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'integer' } }],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  fullName: { type: 'string' },
+                  specialty: { type: 'string' },
+                  licenseNo: { type: 'string', nullable: true },
+                },
+              },
+            },
+          },
+        },
+        responses: { 200: { description: 'OK' }, 400: { description: 'Bad request' }, 404: { description: 'Not found' } },
+      },
+      put: {
+        tags: ['Doctors'],
+        summary: 'Replace doctor',
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'integer' } }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['fullName', 'specialty'],
+                properties: {
+                  fullName: { type: 'string' },
+                  specialty: { type: 'string' },
+                  licenseNo: { type: 'string', nullable: true },
+                },
+              },
+            },
+          },
+        },
+        responses: { 200: { description: 'OK' }, 400: { description: 'Bad request' }, 404: { description: 'Not found' } },
+      },
+      delete: {
+        tags: ['Doctors'],
+        summary: 'Delete doctor',
         parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'integer' } }],
         responses: { 200: { description: 'OK' }, 404: { description: 'Not found' } },
       },
@@ -207,9 +299,61 @@ const spec = {
       },
     },
     '/appointments/appointments/{id}': {
+      get: {
+        tags: ['Appointments'],
+        summary: 'Get appointment by id',
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'integer' } }],
+        responses: { 200: { description: 'OK' }, 404: { description: 'Not found' } },
+      },
+      patch: {
+        tags: ['Appointments'],
+        summary: 'Partial update appointment',
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'integer' } }],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  userId: { type: 'integer' },
+                  doctorId: { type: 'integer' },
+                  scheduledAt: { type: 'string', format: 'date-time' },
+                  reason: { type: 'string', nullable: true },
+                  status: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+        responses: { 200: { description: 'OK' }, 400: { description: 'Bad request' }, 404: { description: 'Not found' } },
+      },
+      put: {
+        tags: ['Appointments'],
+        summary: 'Replace appointment',
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'integer' } }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['userId', 'doctorId', 'scheduledAt'],
+                properties: {
+                  userId: { type: 'integer' },
+                  doctorId: { type: 'integer' },
+                  scheduledAt: { type: 'string', format: 'date-time' },
+                  reason: { type: 'string', nullable: true },
+                  status: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+        responses: { 200: { description: 'OK' }, 400: { description: 'Bad request' }, 404: { description: 'Not found' } },
+      },
       delete: {
         tags: ['Appointments'],
-        summary: 'Cancel appointment',
+        summary: 'Delete appointment',
         parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'integer' } }],
         responses: { 200: { description: 'OK' }, 404: { description: 'Not found' } },
       },
@@ -239,11 +383,92 @@ const spec = {
       },
     },
     '/payments/payments': {
+      post: {
+        tags: ['Payments'],
+        summary: 'Create payment (same as POST /payments/pay)',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['appointmentId', 'amount', 'currency'],
+                properties: {
+                  appointmentId: { type: 'integer' },
+                  amount: { type: 'number' },
+                  currency: { type: 'string', example: 'USD' },
+                  method: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+        responses: { 201: { description: 'Created' }, 400: { description: 'Bad request' } },
+      },
       get: {
         tags: ['Payments'],
         summary: 'List payments',
         parameters: [{ in: 'query', name: 'appointmentId', schema: { type: 'integer' } }],
         responses: { 200: { description: 'OK' } },
+      },
+    },
+    '/payments/payments/{id}': {
+      get: {
+        tags: ['Payments'],
+        summary: 'Get payment by id',
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'integer' } }],
+        responses: { 200: { description: 'OK' }, 404: { description: 'Not found' } },
+      },
+      patch: {
+        tags: ['Payments'],
+        summary: 'Partial update payment',
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'integer' } }],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  amount: { type: 'number' },
+                  currency: { type: 'string' },
+                  method: { type: 'string' },
+                  status: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+        responses: { 200: { description: 'OK' }, 400: { description: 'Bad request' }, 404: { description: 'Not found' } },
+      },
+      put: {
+        tags: ['Payments'],
+        summary: 'Replace payment',
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'integer' } }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['appointmentId', 'amount', 'currency'],
+                properties: {
+                  appointmentId: { type: 'integer' },
+                  amount: { type: 'number' },
+                  currency: { type: 'string' },
+                  method: { type: 'string' },
+                  status: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+        responses: { 200: { description: 'OK' }, 400: { description: 'Bad request' }, 404: { description: 'Not found' } },
+      },
+      delete: {
+        tags: ['Payments'],
+        summary: 'Delete payment',
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'integer' } }],
+        responses: { 200: { description: 'OK' }, 404: { description: 'Not found' } },
       },
     },
   },

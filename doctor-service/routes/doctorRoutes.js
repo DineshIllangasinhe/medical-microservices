@@ -25,7 +25,7 @@ let idSeq = doctors.length + 1;
  *     summary: Create doctor
  *     tags: [Doctors]
  */
-router.post('/doctor', (req, res) => {
+function createDoctor(req, res) {
   const { fullName, specialty, licenseNo } = req.body;
   if (!fullName || !specialty) {
     return res.status(400).json({ error: 'fullName and specialty are required' });
@@ -33,7 +33,18 @@ router.post('/doctor', (req, res) => {
   const doc = { id: idSeq++, fullName, specialty, licenseNo: licenseNo || null };
   doctors.push(doc);
   return res.status(201).json(doc);
-});
+}
+
+router.post('/doctor', createDoctor);
+
+/**
+ * @openapi
+ * /doctors:
+ *   post:
+ *     summary: Create doctor (same as POST /doctor)
+ *     tags: [Doctors]
+ */
+router.post('/doctors', createDoctor);
 
 /**
  * @openapi

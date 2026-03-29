@@ -170,6 +170,41 @@ router.patch('/users/:id', authMiddleware, async (req, res) => {
 /**
  * @openapi
  * /users/{id}:
+ *   put:
+ *     summary: Replace user fields (JWT must match id)
+ *     tags: [Users]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.put('/users/:id', authMiddleware, async (req, res) => {
+  const id = Number(req.params.id);
+  if (Number(req.user.sub) !== id) {
+    return res.status(403).json({ error: 'You can only update your own account' });
+  }
+  const user = findById(id);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  const { fullName, email } = req.body;
+  if (!fullName || !email) {
+    return res.status(400).json({ error: 'fullName and email are required' });
+  }
+  const n = String(fullName).trim();
+  if (!n) return res.status(400).json({ error: 'fullName cannot be empty' });
+  const next = String(email).trim().toLowerCase();
+  if (users.some((u) => u.email === next && u.id !== id)) {
+    return res.status(409).json({ error: 'Email already in use' });
+  }
+  user.fullName = n;
+  user.email = next;
+  return res.json({
+    user: toPublicUser(user),
+    token: signToken(user),
+    expiresIn: '8h',
+    message: 'User updated',
+  });
+});
+
+/**
+ * @openapi
+ * /users/{id}:
  *   delete:
  *     summary: Delete user (JWT must match id)
  *     tags: [Users]
