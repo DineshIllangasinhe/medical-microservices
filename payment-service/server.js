@@ -3,7 +3,7 @@
  * Port: 3004
  *
  * Endpoints (CRUD):
- *   POST   /pay
+ *   POST   /pay | POST /payments
  *   GET    /payments | GET /payments/:id
  *   PATCH  /payments/:id | PUT /payments/:id | DELETE /payments/:id
  *   GET    /api-docs

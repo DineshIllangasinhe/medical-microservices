@@ -7,7 +7,7 @@
  *   POST   /login
  *   GET    /profile (JWT)
  *   GET    /users | GET /users/:id
- *   PATCH  /users/:id | DELETE /users/:id (JWT, own id only)
+ *   PATCH  /users/:id | PUT /users/:id | DELETE /users/:id (JWT, own id only)
  *   GET    /api-docs
  */
 const express = require('express');

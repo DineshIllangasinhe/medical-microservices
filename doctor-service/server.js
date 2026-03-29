@@ -3,7 +3,7 @@
  * Port: 3002
  *
  * Endpoints (CRUD):
- *   POST   /doctor
+ *   POST   /doctor | POST /doctors
  *   GET    /doctors | GET /doctors/:id
  *   PATCH  /doctors/:id | PUT /doctors/:id | DELETE /doctors/:id
  *   GET    /api-docs
