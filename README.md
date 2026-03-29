@@ -1,6 +1,6 @@
 # Online Medical Appointment System — Microservices Backend
 
-Node.js and Express microservices with an API Gateway (`http-proxy-middleware`). Each service has its own `server.js`, in-memory demo data, and **Swagger UI** at `/api-docs`.
+Node.js and Express microservices with an API Gateway (`http-proxy-middleware`). **Swagger UI** is at **`http://localhost:5000/api-docs`** on the gateway (all public paths in one place), and each microservice still exposes `/api-docs` on its own port.
 
 ## Project layout
 
@@ -16,32 +16,26 @@ medical-microservices/
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) 18 or newer
-- npm (bundled with Node)
+- **npm 7+** (workspaces need a single install from the repo root)
 
 ## Install dependencies
 
-From the repository root, install each package (separate `node_modules` per service):
+This repo uses **[npm workspaces](https://docs.npmjs.com/cli/using-npm/workspaces)**. Each service still has its own `package.json`, but you install **once** from the root — dependencies are linked/hoisted and **`package-lock.json` lives only at the root**.
 
-```bash
-cd api-gateway && npm install && cd ..
-cd user-service && npm install && cd ..
-cd doctor-service && npm install && cd ..
-cd appointment-service && npm install && cd ..
-cd payment-service && npm install && cd ..
-```
-
-On Windows PowerShell, run the installs one folder at a time:
+From the repository root:
 
 ```powershell
-Set-Location c:\Users\avish\Documents\git\medical-microservices\user-service; npm install
+Set-Location c:\Users\avish\Documents\git\medical-microservices
+npm install
 ```
 
-(repeat for `doctor-service`, `appointment-service`, `payment-service`, `api-gateway`).
+If you previously ran `npm install` inside each folder and hit odd resolution errors, delete old `node_modules` folders (root + each `*-service` / `api-gateway`) and run `npm install` again from the root only.
 
-Then install the **root** helper (starts all apps with one command):
+### Run one service from the root
 
 ```powershell
-Set-Location c:\Users\avish\Documents\git\medical-microservices; npm install
+npm run start -w user-service
+# or: doctor-service, appointment-service, payment-service, api-gateway
 ```
 
 ## Run everything at once (recommended)
@@ -55,25 +49,28 @@ npm start
 This uses [concurrently](https://www.npmjs.com/package/concurrently) to run all five processes in **one terminal**. Logs are prefixed with `US`, `DS`, `AS`, `PS`, `GW`. Press `Ctrl+C` once to stop all of them (`-k` kills the rest if one exits).
 
 - **Gateway:** [http://localhost:5000](http://localhost:5000)  
-- **Swagger:** ports `3001`–`3004` at `/api-docs` as before  
+- **Swagger (gateway — recommended for demos):** [http://localhost:5000/api-docs](http://localhost:5000/api-docs)  
+- **Swagger per service:** ports `3001`–`3004` at `/api-docs`  
 
 To run only the four microservices (no gateway): `npm run start:services-only`.
 
 ## Run each service (independent)
 
-Open **five terminals**. Start the four microservices first, then the gateway.
+From **repo root** (after `npm install` there), or `cd` into the folder and run `npm start`.
 
-| Service             | Command                         | Port |
-|---------------------|----------------------------------|------|
-| User                | `cd user-service && npm start`   | 3001 |
-| Doctor              | `cd doctor-service && npm start` | 3002 |
-| Appointment         | `cd appointment-service && npm start` | 3003 |
-| Payment             | `cd payment-service && npm start` | 3004 |
-| API Gateway         | `cd api-gateway && npm start`  | 5000 |
+| Service     | From root                         | From service folder | Port |
+|-------------|-----------------------------------|----------------------|------|
+| User        | `npm run start -w user-service`   | `cd user-service; npm start` | 3001 |
+| Doctor      | `npm run start -w doctor-service` | `cd doctor-service; npm start` | 3002 |
+| Appointment | `npm run start -w appointment-service` | `cd appointment-service; npm start` | 3003 |
+| Payment     | `npm run start -w payment-service` | `cd payment-service; npm start` | 3004 |
+| API Gateway | `npm run start -w api-gateway`   | `cd api-gateway; npm start` | 5000 |
 
-### Swagger (per service)
+### Swagger (gateway + per service)
 
-With a service running, open:
+- **All routes via gateway:** [http://localhost:5000/api-docs](http://localhost:5000/api-docs) (run gateway + backends for Try it out)
+
+Per microservice (direct):
 
 - User: [http://localhost:3001/api-docs](http://localhost:3001/api-docs)
 - Doctor: [http://localhost:3002/api-docs](http://localhost:3002/api-docs)
@@ -86,40 +83,13 @@ The gateway strips the first path segment and forwards to the matching service.
 
 | Gateway URL | Forwards to service path |
 |-------------|---------------------------|
-| **Users (CRUD + auth)** | |
-| `POST /users/register` | `POST /register` |
-| `POST /users/login` | `POST /login` |
-| `GET /users/profile` | `GET /profile` (Bearer JWT) |
-| `GET /users/users` | `GET /users` |
-| `GET /users/users/1` | `GET /users/1` |
-| `PATCH /users/users/1` | `PATCH /users/1` (Bearer, **own id only**) |
-| `DELETE /users/users/1` | `DELETE /users/1` (Bearer, **own id only**) |
-| **Doctors (CRUD)** | |
-| `POST /doctors/doctor` | `POST /doctor` |
-| `GET /doctors/doctors` | `GET /doctors` |
-| `GET /doctors/doctors/1` | `GET /doctors/1` |
-| `PATCH /doctors/doctors/1` | `PATCH /doctors/1` |
-| `PUT /doctors/doctors/1` | `PUT /doctors/1` |
-| `DELETE /doctors/doctors/1` | `DELETE /doctors/1` |
-| **Appointments (CRUD)** | |
-| `POST /appointments/appointments` | `POST /appointments` |
-| `GET /appointments/appointments` | `GET /appointments` |
-| `GET /appointments/appointments/1` | `GET /appointments/1` |
-| `PATCH /appointments/appointments/1` | `PATCH /appointments/1` |
-| `PUT /appointments/appointments/1` | `PUT /appointments/1` |
-| `DELETE /appointments/appointments/1` | `DELETE /appointments/1` |
-| **Payments (CRUD)** | |
-| `POST /payments/pay` | `POST /pay` |
-| `GET /payments/payments` | `GET /payments` |
-| `GET /payments/payments/1` | `GET /payments/1` |
-| `PATCH /payments/payments/1` | `PATCH /payments/1` |
-| `PUT /payments/payments/1` | `PUT /payments/1` |
-| `DELETE /payments/payments/1` | `DELETE /payments/1` |
 
-Gateway health and route map:
+
+Gateway health, route map, and Swagger:
 
 - [http://localhost:5000/health](http://localhost:5000/health)
 - [http://localhost:5000/](http://localhost:5000/)
+- [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
 
 ## Optional: service base URLs (Docker / remote)
 
@@ -151,6 +121,8 @@ Replace `TOKEN` from login response for profile:
 
 ```bash
 curl -s http://localhost:5000/users/profile -H "Authorization: Bearer TOKEN"
+curl -s -X PATCH http://localhost:5000/users/profile -H "Authorization: Bearer TOKEN" -H "Content-Type: application/json" -d "{\"fullName\":\"Pat P.\",\"phone\":\"+94771234567\"}"
+curl -s http://localhost:5000/users/users
 ```
 
 ## Security note

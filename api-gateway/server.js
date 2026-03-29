@@ -12,11 +12,13 @@
  *   POST http://localhost:5000/users/register
  *   GET  http://localhost:5000/doctors/doctors
  *
- * Swagger UI remains on each microservice at /api-docs (see README).
+ * Swagger UI: GET /api-docs (aggregated gateway paths). Each microservice also has /api-docs on its port.
  */
 const express = require('express');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+const gatewayOpenApi = require('./config/openapi');
 
 const PORT = process.env.PORT || 5000;
 
@@ -48,15 +50,19 @@ app.get('/health', (_req, res) => {
 app.get('/', (_req, res) => {
   res.json({
     message: 'Medical Appointment API Gateway',
+    swaggerUi: `http://localhost:${PORT}/api-docs`,
     usage: {
       users: 'CRUD: POST /users/register, login, GET /users/profile (JWT), GET /users/users, GET|PATCH|DELETE /users/users/:id (JWT for patch/delete own)',
       doctors: 'CRUD: POST /doctors/doctor, GET /doctors/doctors, GET|PATCH|PUT|DELETE /doctors/doctors/:id',
       appointments: 'CRUD: POST/GET /appointments/appointments, GET|PATCH|PUT|DELETE /appointments/appointments/:id',
       payments: 'CRUD: POST /payments/pay, GET /payments/payments, GET|PATCH|PUT|DELETE /payments/payments/:id',
     },
-    swaggerPerService: 'Each microservice exposes /api-docs on its own port (3001–3004).',
+    swaggerPerService: 'Each microservice also exposes /api-docs on ports 3001–3004.',
   });
 });
+
+/** Gateway-facing OpenAPI — try-it-out hits this host (port 5000) */
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(gatewayOpenApi, { explorer: true }));
 
 /**
  * Shared proxy options: strip gateway prefix; body and Authorization pass through untouched.
@@ -85,6 +91,6 @@ app.use((_req, res) => {
 });
 
 app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
   console.log(`API Gateway listening on http://localhost:${PORT}`);
+  console.log(`Swagger UI: http://localhost:${PORT}/api-docs`);
 });
