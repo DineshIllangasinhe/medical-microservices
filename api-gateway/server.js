@@ -2,11 +2,11 @@
  * API Gateway — single entry point for the medical appointment backend.
  * Port: 5000
  *
- * Proxies (path prefix is stripped before forwarding):
- *   /users        → User service (3001)
- *   /doctors      → Doctor service (3002)
- *   /appointments → Appointment service (3003)
- *   /payments     → Payment service (3004)
+ * Proxies: Express strips the first path segment; the remainder is forwarded as-is (no pathRewrite).
+ *   /users/*        → User service (3001), e.g. /users/users/1 → GET /users/1
+ *   /doctors/*      → Doctor service (3002)
+ *   /appointments/* → Appointment service (3003)
+ *   /payments/*     → Payment service (3004)
  *
  * Example via gateway:
  *   POST http://localhost:5000/users/register
@@ -64,27 +64,18 @@ app.get('/', (_req, res) => {
 /** Gateway-facing OpenAPI — try-it-out hits this host (port 5000) */
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(gatewayOpenApi, { explorer: true }));
 
-/**
- * Shared proxy options: strip gateway prefix; body and Authorization pass through untouched.
- */
-function proxyOptions(target, pathRewritePattern, pathRewriteReplacement) {
-  return {
-    target,
-    changeOrigin: true,
-    pathRewrite: { [pathRewritePattern]: pathRewriteReplacement },
-  };
+/** Shared proxy: changeOrigin only. Do not pathRewrite — v3 middleware uses req.url after mount; rewriting ^/users turned /users/1 into /1 and broke GET /users/users/:id. */
+function proxyTo(target) {
+  return { target, changeOrigin: true };
 }
 
-app.use('/users', createProxyMiddleware(proxyOptions(USER_SERVICE, '^/users', '')));
+app.use('/users', createProxyMiddleware(proxyTo(USER_SERVICE)));
 
-app.use('/doctors', createProxyMiddleware(proxyOptions(DOCTOR_SERVICE, '^/doctors', '')));
+app.use('/doctors', createProxyMiddleware(proxyTo(DOCTOR_SERVICE)));
 
-app.use(
-  '/appointments',
-  createProxyMiddleware(proxyOptions(APPOINTMENT_SERVICE, '^/appointments', ''))
-);
+app.use('/appointments', createProxyMiddleware(proxyTo(APPOINTMENT_SERVICE)));
 
-app.use('/payments', createProxyMiddleware(proxyOptions(PAYMENT_SERVICE, '^/payments', '')));
+app.use('/payments', createProxyMiddleware(proxyTo(PAYMENT_SERVICE)));
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'Not found', hint: 'See GET / for route map' });
