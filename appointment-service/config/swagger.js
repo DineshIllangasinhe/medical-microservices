@@ -11,7 +11,7 @@ const options = {
     info: {
       title: 'Appointment Service API',
       version: '1.0.0',
-      description: 'Create, list, and cancel medical appointments (demo in-memory storage).',
+      description: 'Full CRUD for appointments (demo in-memory storage).',
     },
     servers: [{ url: `http://localhost:${PORT}`, description: 'Appointment service (direct)' }],
   },

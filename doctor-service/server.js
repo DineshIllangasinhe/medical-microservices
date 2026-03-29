@@ -2,11 +2,11 @@
  * Doctor Service — Online Medical Appointment System
  * Port: 3002
  *
- * Endpoints:
- *   POST /doctor
- *   GET  /doctors
- *   GET  /doctors/:id
- *   GET  /api-docs
+ * Endpoints (CRUD):
+ *   POST   /doctor
+ *   GET    /doctors | GET /doctors/:id
+ *   PATCH  /doctors/:id | PUT /doctors/:id | DELETE /doctors/:id
+ *   GET    /api-docs
  */
 const express = require('express');
 const cors = require('cors');

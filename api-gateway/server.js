@@ -52,10 +52,10 @@ app.get('/', (_req, res) => {
     message: 'Medical Appointment API Gateway',
     swaggerUi: `http://localhost:${PORT}/api-docs`,
     usage: {
-      users: 'Prefix paths with /users — e.g. POST /users/register, GET /users/profile',
-      doctors: 'POST /doctors/doctor, GET /doctors/doctors, GET /doctors/doctors/:id',
-      appointments: 'POST /appointments/appointments, GET /appointments/appointments, DELETE /appointments/appointments/:id',
-      payments: 'POST /payments/pay, GET /payments/payments',
+      users: 'CRUD: POST /users/register, login, GET /users/profile (JWT), GET /users/users, GET|PATCH|DELETE /users/users/:id (JWT for patch/delete own)',
+      doctors: 'CRUD: POST /doctors/doctor, GET /doctors/doctors, GET|PATCH|PUT|DELETE /doctors/doctors/:id',
+      appointments: 'CRUD: POST/GET /appointments/appointments, GET|PATCH|PUT|DELETE /appointments/appointments/:id',
+      payments: 'CRUD: POST /payments/pay, GET /payments/payments, GET|PATCH|PUT|DELETE /payments/payments/:id',
     },
     swaggerPerService: 'Each microservice also exposes /api-docs on ports 3001–3004.',
   });

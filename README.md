@@ -83,21 +83,7 @@ The gateway strips the first path segment and forwards to the matching service.
 
 | Gateway URL | Forwards to service path |
 |-------------|---------------------------|
-| `POST /users/register` | User → `POST /register` |
-| `POST /users/login` | User → `POST /login` |
-| `GET /users/profile` | User → `GET /profile` (header: `Authorization: Bearer <token>`) |
-| `PATCH /users/profile` | User → `PATCH /profile` (updates name/phone; returns new JWT) |
-| `PATCH /users/profile/password` | User → `PATCH /profile/password` (`currentPassword`, `newPassword`) |
-| `GET /users/users` | User → `GET /users` (demo list, no auth) |
-| `GET /users/users/1` | User → `GET /users/1` |
-| `POST /doctors/doctor` | Doctor → `POST /doctor` |
-| `GET /doctors/doctors` | Doctor → `GET /doctors` |
-| `GET /doctors/doctors/1` | Doctor → `GET /doctors/1` |
-| `POST /appointments/appointments` | Appointment → `POST /appointments` |
-| `GET /appointments/appointments` | Appointment → `GET /appointments` |
-| `DELETE /appointments/appointments/1` | Appointment → `DELETE /appointments/1` |
-| `POST /payments/pay` | Payment → `POST /pay` |
-| `GET /payments/payments` | Payment → `GET /payments` |
+
 
 Gateway health, route map, and Swagger:
 

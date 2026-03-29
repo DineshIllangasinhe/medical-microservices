@@ -2,10 +2,10 @@
  * Appointment Service — Online Medical Appointment System
  * Port: 3003
  *
- * Endpoints:
+ * Endpoints (CRUD):
  *   POST   /appointments
- *   GET    /appointments
- *   DELETE /appointments/:id
+ *   GET    /appointments | GET /appointments/:id
+ *   PATCH  /appointments/:id | PUT /appointments/:id | DELETE /appointments/:id
  *   GET    /api-docs
  */
 const express = require('express');
