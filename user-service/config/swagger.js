@@ -13,7 +13,7 @@ const options = {
       title: 'User Service API',
       version: '1.0.0',
       description:
-        'Handles patient/user registration, authentication, and profile retrieval for the online medical appointment system.',
+        'Users: register/login, profile, full CRUD on /users (PATCH/DELETE own account requires JWT).',
     },
     servers: [{ url: `http://localhost:${PORT}`, description: 'User service (direct)' }],
     components: {

@@ -11,7 +11,7 @@ const options = {
     info: {
       title: 'Payment Service API',
       version: '1.0.0',
-      description: 'Record and list payments linked to appointments (demo — no real card processing).',
+      description: 'Full CRUD for payment records (demo — no real card processing).',
     },
     servers: [{ url: `http://localhost:${PORT}`, description: 'Payment service (direct)' }],
   },

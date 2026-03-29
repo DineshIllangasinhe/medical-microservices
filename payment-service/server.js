@@ -2,10 +2,11 @@
  * Payment Service — Online Medical Appointment System
  * Port: 3004
  *
- * Endpoints:
- *   POST /pay
- *   GET  /payments
- *   GET  /api-docs
+ * Endpoints (CRUD):
+ *   POST   /pay
+ *   GET    /payments | GET /payments/:id
+ *   PATCH  /payments/:id | PUT /payments/:id | DELETE /payments/:id
+ *   GET    /api-docs
  */
 const express = require('express');
 const cors = require('cors');

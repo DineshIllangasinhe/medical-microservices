@@ -86,17 +86,35 @@ The gateway strips the first path segment and forwards to the matching service.
 
 | Gateway URL | Forwards to service path |
 |-------------|---------------------------|
-| `POST /users/register` | User → `POST /register` |
-| `POST /users/login` | User → `POST /login` |
-| `GET /users/profile` | User → `GET /profile` (header: `Authorization: Bearer <token>`) |
-| `POST /doctors/doctor` | Doctor → `POST /doctor` |
-| `GET /doctors/doctors` | Doctor → `GET /doctors` |
-| `GET /doctors/doctors/1` | Doctor → `GET /doctors/1` |
-| `POST /appointments/appointments` | Appointment → `POST /appointments` |
-| `GET /appointments/appointments` | Appointment → `GET /appointments` |
-| `DELETE /appointments/appointments/1` | Appointment → `DELETE /appointments/1` |
-| `POST /payments/pay` | Payment → `POST /pay` |
-| `GET /payments/payments` | Payment → `GET /payments` |
+| **Users (CRUD + auth)** | |
+| `POST /users/register` | `POST /register` |
+| `POST /users/login` | `POST /login` |
+| `GET /users/profile` | `GET /profile` (Bearer JWT) |
+| `GET /users/users` | `GET /users` |
+| `GET /users/users/1` | `GET /users/1` |
+| `PATCH /users/users/1` | `PATCH /users/1` (Bearer, **own id only**) |
+| `DELETE /users/users/1` | `DELETE /users/1` (Bearer, **own id only**) |
+| **Doctors (CRUD)** | |
+| `POST /doctors/doctor` | `POST /doctor` |
+| `GET /doctors/doctors` | `GET /doctors` |
+| `GET /doctors/doctors/1` | `GET /doctors/1` |
+| `PATCH /doctors/doctors/1` | `PATCH /doctors/1` |
+| `PUT /doctors/doctors/1` | `PUT /doctors/1` |
+| `DELETE /doctors/doctors/1` | `DELETE /doctors/1` |
+| **Appointments (CRUD)** | |
+| `POST /appointments/appointments` | `POST /appointments` |
+| `GET /appointments/appointments` | `GET /appointments` |
+| `GET /appointments/appointments/1` | `GET /appointments/1` |
+| `PATCH /appointments/appointments/1` | `PATCH /appointments/1` |
+| `PUT /appointments/appointments/1` | `PUT /appointments/1` |
+| `DELETE /appointments/appointments/1` | `DELETE /appointments/1` |
+| **Payments (CRUD)** | |
+| `POST /payments/pay` | `POST /pay` |
+| `GET /payments/payments` | `GET /payments` |
+| `GET /payments/payments/1` | `GET /payments/1` |
+| `PATCH /payments/payments/1` | `PATCH /payments/1` |
+| `PUT /payments/payments/1` | `PUT /payments/1` |
+| `DELETE /payments/payments/1` | `DELETE /payments/1` |
 
 Gateway health and route map:
 
