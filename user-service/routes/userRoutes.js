@@ -94,7 +94,8 @@ router.post('/login', async (req, res) => {
  * @openapi
  * /profile:
  *   get:
- *     summary: Current user (JWT)
+ *     summary: Current user (JWT required)
+ *     description: Send Authorization Bearer token from POST /login. Without it, returns 401.
  *     tags: [Users]
  *     security: [ { bearerAuth: [] } ]
  */

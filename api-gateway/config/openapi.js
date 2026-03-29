@@ -74,8 +74,14 @@ const spec = {
       get: {
         tags: ['Users'],
         summary: 'Current user profile',
+        description:
+          '**Authentication required.** Call **POST /users/login** first, then send the returned `token` as ' +
+          '`Authorization: Bearer <token>`. In Swagger UI, use **Authorize** → bearerAuth and paste the token only (no `Bearer ` prefix).',
         security: [{ bearerAuth: [] }],
-        responses: { 200: { description: 'OK' }, 401: { description: 'Unauthorized' } },
+        responses: {
+          200: { description: 'OK' },
+          401: { description: 'Missing/invalid `Authorization` header or expired token' },
+        },
       },
     },
     '/users/users': {
